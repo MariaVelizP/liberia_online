@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Librería Veliz</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f8f7;--ink:#10303a;--muted:#4b6670;--card:#ffffff;--line:#d3e0dd;--accent:#e2a72e;--red:#c8102e;--bot:#e8f0ee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1d22;--ink:#e8f1ef;--muted:#9bb3ba;--card:#14292f;--line:#27434b;--bot:#1b343b}}
+:root[data-theme="dark"]{--bg:#0d1d22;--ink:#e8f1ef;--muted:#9bb3ba;--card:#14292f;--line:#27434b;--bot:#1b343b}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Work Sans',system-ui,sans-serif;line-height:1.6}
+h1,h2,h3{font-family:'Bitter',Georgia,serif;line-height:1.15;margin:0}
+a{color:inherit}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+header{border-bottom:4px solid var(--red)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;gap:12px;flex-wrap:wrap}
+.logo{font-family:'Bitter',serif;font-weight:800;font-size:1.4rem}
+nav a{margin-left:18px;text-decoration:none;font-weight:500}
+nav a:hover{text-decoration:underline}
+.hero{padding:56px 0 40px}
+.hero h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:800;max-width:14ch}
+.hero p{max-width:52ch;color:var(--muted);font-size:1.1rem;margin:18px 0 26px}
+.btn{display:inline-block;background:var(--accent);color:#10303a;font-weight:600;padding:12px 22px;border:0;border-radius:6px;cursor:pointer;font:inherit;font-weight:600;text-decoration:none}
+.btn.alt{background:transparent;border:2px solid var(--ink);color:var(--ink);margin-left:8px}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,.chip:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+section{padding:36px 0}
+h2{font-size:1.8rem;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.item{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);padding:18px;border-radius:4px}
+.item h3{font-size:1.1rem;margin-bottom:6px}
+.item p{margin:0;color:var(--muted);font-size:.95rem}
+.contact{background:var(--card);border:1px solid var(--line);padding:22px;border-radius:4px}
+.contact p{margin:6px 0}
+footer{border-top:1px solid var(--line);padding:24px 0 90px;color:var(--muted);font-size:.9rem}
+/* chatbot */
+#fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--red);color:#fff;border:0;border-radius:999px;padding:14px 20px;font:inherit;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#chat{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;width:min(380px,calc(100vw - 36px));height:min(620px,calc(100% - 36px - env(safe-area-inset-top,0px)));background:var(--card);border:1px solid var(--line);border-radius:10px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+#chat.open{display:flex}
+.chead{background:var(--ink);color:var(--bg);padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.chead b{font-family:'Bitter',serif}
+.chead button{background:none;border:0;color:inherit;font-size:1.4rem;cursor:pointer}
+#msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:86%;padding:9px 12px;border-radius:12px;font-size:.93rem;white-space:pre-line}
+.m.bot{background:var(--bot);align-self:flex-start;border-bottom-left-radius:3px}
+.m.me{background:var(--accent);color:#10303a;align-self:flex-end;border-bottom-right-radius:3px}
+#chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid var(--line);max-height:128px;overflow-y:auto}
+.chip{background:transparent;border:1px solid var(--ink);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:.8rem;cursor:pointer}
+.chip:hover{background:var(--bot)}
+.send{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
+input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+.send input{flex:1}
+.send button{background:var(--ink);color:var(--bg);border:0;border-radius:6px;padding:0 14px;cursor:pointer;font:inherit}
+#lead{display:none;padding:12px;border-top:1px solid var(--line);gap:8px;flex-direction:column;background:var(--bot)}
+#lead.show{display:flex}
+#lead small{color:var(--muted)}
+.row{display:flex;gap:6px}
+.row .btn{flex:1;padding:9px 6px;font-size:.85rem;text-align:center}
+.row .btn.alt{margin:0}
+.toggle{background:none;border:0;color:var(--ink);text-decoration:underline;cursor:pointer;font:inherit;font-size:.8rem;padding:6px 12px;text-align:left}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="logo">Librería Veliz</div><nav><a href="#catalogo">Catálogo</a><a href="#contacto">Contacto</a></nav></div></header>
+
+<main class="wrap">
+<div class="hero">
+<h1>Libros, útiles y papelería en el Perú</h1>
+<p>Todo para el colegio, la universidad y la oficina. Consulta precios y stock con nuestro asistente o escríbenos por WhatsApp.</p>
+<button class="btn" onclick="openChat()">Hablar con el asistente</button>
+<a class="btn alt" href="https://wa.me/51948548368" target="_blank" rel="noopener">WhatsApp</a>
+</div>
+
+<section id="catalogo">
+<h2>Qué encuentras en la librería</h2>
+<div class="grid">
+<div class="item"><h3>Libros</h3><p>Texto escolar, universitario, literatura y libros peruanos.</p></div>
+<div class="item"><h3>Útiles escolares</h3><p>Cuadernos, lapiceros, colores, mochilas y más.</p></div>
+<div class="item"><h3>Papelería y oficina</h3><p>Papel, folders, archivadores y tinta.</p></div>
+<div class="item"><h3>Servicios</h3><p>Fotocopias, impresiones, anillados y plastificado.</p></div>
+</div>
+</section>
+
+<section id="contacto">
+<h2>Contacto</h2>
+<div class="contact">
+<p><b>WhatsApp:</b> <a href="https://wa.me/51948548368" target="_blank" rel="noopener">948 548 368</a></p>
+<p><b>Correo:</b> <a href="mailto:maria.veliz5@unmsm.edu.pe">maria.veliz5@unmsm.edu.pe</a></p>
+<p><b>Horario:</b> lunes a sábado, 9:00 a. m. a 8:00 p. m.</p>
+<p><b>Ubicación:</b> Lima, Perú</p>
+</div>
+</section>
+</main>
+<footer><div class="wrap">© Librería Veliz · Lima, Perú</div></footer>
+
+<button id="fab" onclick="openChat()" aria-label="Abrir chat">Chat con Veliz</button>
+
+<div id="chat" role="dialog" aria-label="Chat de Librería Veliz">
+<div class="chead"><b>Asistente Veliz</b><button onclick="closeChat()" aria-label="Cerrar chat">×</button></div>
+<div id="msgs" aria-live="polite"></div>
+<div id="chips"></div>
+<button class="toggle" onclick="toggleLead()">Enviar mi consulta a la librería</button>
+<div id="lead">
+<small>Tu conversación se enviará por WhatsApp o correo (se abrirá la aplicación para que confirmes el envío).</small>
+<input id="nm" placeholder="Tu nombre" autocomplete="name">
+<input id="ph" placeholder="Tu celular" inputmode="tel" autocomplete="tel">
+<div class="row"><button class="btn" onclick="sendWA()">Por WhatsApp</button><button class="btn alt" onclick="sendMail()">Por correo</button></div>
+</div>
+<form class="send" onsubmit="return userSend(event)">
+<input id="txt" placeholder="Escribe tu pregunta…" autocomplete="off" aria-label="Mensaje">
+<button type="submit">Enviar</button>
+</form>
+</div>
+
+<script>
+var WA="51948548368", MAIL="maria.veliz5@unmsm.edu.pe";
+var FAQ=[
+{q:"¿Cuál es el horario?",k:["horario","hora","abren","cierran","atienden"],a:"Atendemos de lunes a sábado, de 9:00 a. m. a 8:00 p. m."},
+{q:"¿Dónde están ubicados?",k:["ubicacion","ubicados","direccion","donde","local","tienda"],a:"Estamos en Lima, Perú. Escríbenos por WhatsApp al 948 548 368 y te enviamos la dirección exacta."},
+{q:"¿Qué libros venden?",k:["libro","texto","novela","literatura"],a:"Vendemos textos escolares y universitarios, literatura y libros de autores peruanos. Si buscas un título, dinos el nombre y lo consultamos."},
+{q:"¿Tienen útiles escolares?",k:["util","escolar","cuaderno","mochila","lapicero","colegio"],a:"Sí. Tenemos cuadernos, lapiceros, colores, plumones, mochilas y todo lo de la lista escolar."},
+{q:"¿Hacen fotocopias e impresiones?",k:["fotocopia","imprim","impresion","anillado","plastificado","copias"],a:"Sí. Ofrecemos fotocopias, impresiones, anillados y plastificado."},
+{q:"¿Cuáles son los precios?",k:["precio","cuesta","costo","cuanto","vale","tarifa"],a:"Los precios cambian según el producto. Dinos qué necesitas y te cotizamos por WhatsApp."},
+{q:"¿Hacen delivery?",k:["delivery","envio","enviar","domicilio","reparto","provincia"],a:"Sí, coordinamos envíos a domicilio. Escríbenos con tu distrito y tu pedido para darte el costo."},
+{q:"¿Qué formas de pago aceptan?",k:["pago","pagar","yape","plin","tarjeta","efectivo","transferencia"],a:"Aceptamos efectivo, Yape, Plin y transferencia. Confirma con nosotros si necesitas otro medio."},
+{q:"¿Tienen descuentos por mayor?",k:["mayor","descuento","oferta","promocion","colegio","institucion","cantidad"],a:"Sí, hacemos precios especiales para colegios, institutos y compras por volumen. Envíanos tu lista para cotizar."},
+{q:"¿Cómo hago un pedido?",k:["pedido","pedir","comprar","reservar","encargo","stock"],a:"Envíanos tu lista por WhatsApp (948 548 368) o usa el botón “Enviar mi consulta”. Te confirmamos stock y precio."}
+];
+var log=[];
+var msgs=document.getElementById('msgs'),chips=document.getElementById('chips');
+function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function add(t,w){var d=document.createElement('div');d.className='m '+w;d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;log.push((w==='me'?'Cliente: ':'Bot: ')+t)}
+function answer(t){
+ var n=norm(t),best=null,sc=0;
+ FAQ.forEach(function(f){var s=0;f.k.forEach(function(k){if(n.indexOf(k)>-1)s++});if(s>sc){sc=s;best=f}});
+ if(/^(hola|buenas|buenos|hey|hi)/.test(n)&&!best)return"¡Hola! Soy el asistente de Librería Veliz. Elige una pregunta de abajo o escribe la tuya.";
+ return best?best.a:"No tengo esa respuesta. Toca “Enviar mi consulta a la librería” y te responderemos por WhatsApp o correo.";
+}
+function ask(t){add(t,'me');setTimeout(function(){add(answer(t),'bot')},300)}
+function userSend(e){e.preventDefault();var i=document.getElementById('txt');var v=i.value.trim();if(v){ask(v);i.value=''}return false}
+FAQ.forEach(function(f){var b=document.createElement('button');b.className='chip';b.textContent=f.q;b.onclick=function(){ask(f.q)};chips.appendChild(b)});
+var started=false;
+function openChat(){document.getElementById('chat').classList.add('open');document.getElementById('fab').style.display='none';if(!started){started=true;add("¡Hola! Soy el asistente de Librería Veliz. Elige una pregunta o escribe la tuya.",'bot')}}
+function closeChat(){document.getElementById('chat').classList.remove('open');document.getElementById('fab').style.display='block'}
+function toggleLead(){document.getElementById('lead').classList.toggle('show')}
+function body(){
+ var n=document.getElementById('nm').value.trim(),p=document.getElementById('ph').value.trim();
+ return "Nueva consulta desde la web de Librería Veliz\nNombre: "+(n||"(no indicó)")+"\nCelular: "+(p||"(no indicó)")+"\n\nConversación:\n"+(log.join("\n")||"(sin mensajes)");
+}
+function sendWA(){window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(body()),"_blank")}
+function sendMail(){window.location.href="mailto:"+MAIL+"?subject="+encodeURIComponent("Consulta desde la web - Librería Veliz")+"&body="+encodeURIComponent(body())}
+</script>
+</body>
+</html>
