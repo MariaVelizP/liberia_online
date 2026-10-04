@@ -69,7 +69,7 @@ input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px sol
 <div class="hero">
 <h1>Libros, útiles y papelería en el Perú</h1>
 <p>Todo para el colegio, la universidad y la oficina. Consulta precios y stock con nuestro asistente o escríbenos por WhatsApp.</p>
-<button class="btn" onclick="openChat()">Hablar con el asistente</button>
+<button class="btn" onclick="openChat()">🤖 Hablar con el asistente</button>
 <a class="btn alt" href="https://wa.me/51948548368" target="_blank" rel="noopener">WhatsApp</a>
 </div>
 
@@ -95,10 +95,10 @@ input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px sol
 </main>
 <footer><div class="wrap">© Librería Veliz · Lima, Perú</div></footer>
 
-<button id="fab" onclick="openChat()" aria-label="Abrir chat">Chat con Veliz</button>
+<button id="fab" onclick="openChat()" aria-label="Abrir chat">🤖 Chat con Veliz</button>
 
 <div id="chat" role="dialog" aria-label="Chat de Librería Veliz">
-<div class="chead"><b>Asistente Veliz</b><button onclick="closeChat()" aria-label="Cerrar chat">×</button></div>
+<div class="chead"><b>🤖 Asistente Veliz</b><button onclick="closeChat()" aria-label="Cerrar chat">×</button></div>
 <div id="msgs" aria-live="polite"></div>
 <div id="chips"></div>
 <button class="toggle" onclick="toggleLead()">Enviar mi consulta a la librería</button>
@@ -138,7 +138,25 @@ function answer(t){
  if(/^(hola|buenas|buenos|hey|hi)/.test(n)&&!best)return"¡Hola! Soy el asistente de Librería Veliz. Elige una pregunta de abajo o escribe la tuya.";
  return best?best.a:"No tengo esa respuesta. Toca “Enviar mi consulta a la librería” y te responderemos por WhatsApp o correo.";
 }
-function ask(t){add(t,'me');setTimeout(function(){add(answer(t),'bot')},300)}
+var N8N_URL="https://maria-veliz5.app.n8n.cloud/webhook/libreria-chat-0001/chat";
+var sid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+Math.random();
+function parseN8n(txt){
+ try{var j=JSON.parse(txt);return j.output||j.text||j.message||""}catch(e){}
+ var out="";txt.split("\n").forEach(function(l){l=l.trim();if(!l)return;try{var o=JSON.parse(l);if(o.type==="item"&&o.content)out+=o.content;else if(o.output)out+=o.output}catch(e){}});
+ return out;
+}
+async function ask(t){
+ add(t,'me');
+ var typing=document.createElement('div');typing.className='m bot';typing.textContent='Escribiendo…';msgs.appendChild(typing);msgs.scrollTop=msgs.scrollHeight;
+ var reply="";
+ try{
+  var r=await fetch(N8N_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"sendMessage",sessionId:sid,chatInput:t})});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  reply=parseN8n(await r.text());
+ }catch(e){console.warn("n8n no disponible, uso respuestas locales:",e)}
+ typing.remove();
+ add(reply||answer(t),'bot');
+}
 function userSend(e){e.preventDefault();var i=document.getElementById('txt');var v=i.value.trim();if(v){ask(v);i.value=''}return false}
 FAQ.forEach(function(f){var b=document.createElement('button');b.className='chip';b.textContent=f.q;b.onclick=function(){ask(f.q)};chips.appendChild(b)});
 var started=false;
